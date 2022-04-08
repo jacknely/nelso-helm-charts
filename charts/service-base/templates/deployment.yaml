@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    app: {{ .Values.name }}
+
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.name }}
+    
+    spec:  
+      containers:
+        - name: {{ .Values.name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["gunicorn", "-c", "/app/config/gunicorn/gunicorn-config.py", "service:app"]
+          ports:
+          - containerPort: {{ .Values.container.port }}       
+          env:
+          - name: "APPLICATION_STAGE"
+            value: {{ .Values.stage | quote }}         
+          volumeMounts:
+          - name: gunicorn-config
+            mountPath: /app/config/gunicorn/gunicorn-config.py
+            subPath: gunicorn-config.py
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.container.port }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.container.port }}
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 60"]
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+  
+      volumes:
+      - name: gunicorn-config
+        configMap:
+          name: "{{ .Values.name }}-gunicorn-config"
