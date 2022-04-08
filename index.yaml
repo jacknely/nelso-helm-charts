@@ -11,17 +11,6 @@ entries:
     urls:
     - https://github.com/jacknely/nelso-helm-charts/releases/download/hello-world-0.1.0/hello-world-0.1.0.tgz
     version: 0.1.0
-  helm:
-  - apiVersion: v2
-    appVersion: 0.0.1
-    created: "2022-04-08T19:33:24.700414415Z"
-    description: A Helm chart for Kubernetes
-    digest: 9b014925b2c8a053590aa2ee8197641db38cc84f14ff4df071f84f5ffdf21a8d
-    name: helm
-    type: application
-    urls:
-    - https://github.com/jacknely/nelso-helm-charts/releases/download/helm-0.0.1/helm-0.0.1.tgz
-    version: 0.0.1
   service-base:
   - apiVersion: v2
     appVersion: 0.0.1
