@@ -22,4 +22,15 @@ entries:
     urls:
     - https://github.com/jacknely/nelso-helm-charts/releases/download/helm-0.0.1/helm-0.0.1.tgz
     version: 0.0.1
+  service-base:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2022-04-08T19:38:11.617134896Z"
+    description: A base Helm chart for services
+    digest: de5f6e8aadbe96b4525343e032533cbc566b6c5a892273b339e1b2b73c79842f
+    name: service-base
+    type: application
+    urls:
+    - https://github.com/jacknely/nelso-helm-charts/releases/download/service-base-0.0.1/service-base-0.0.1.tgz
+    version: 0.0.1
 generated: "2022-03-05T18:51:35.973998291Z"
