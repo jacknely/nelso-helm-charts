@@ -1,0 +1,79 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    app: {{ .Values.name }}
+
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.name }}
+    
+    spec:  
+      containers:
+        {{- if .Values.nginx }}
+        - name: "{{ .Values.name }}-nginx"
+          image: nginx:alpine
+          ports:
+          - containerPort: 80
+          volumeMounts:
+          - name: nginx-config
+            mountPath: /etc/nginx/nginx.conf
+            subPath: nginx.conf
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "10m"
+        {{- end }}
+        - name: {{ .Values.name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["gunicorn", "-c", "/app/config/gunicorn/gunicorn-config.py", "service.app:app"]
+          ports:
+          - containerPort: {{ .Values.container.port }}       
+          {{- if or $.Values.env $.Values.envSecrets }}
+          env:
+            {{- range $key, $value := $.Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- range $key, $secret := $.Values.envSecrets }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secret }}
+                  key: {{ $key | quote }}
+            {{- end }}
+          {{- end }}         
+          volumeMounts:
+          - name: gunicorn-config
+            mountPath: /app/config/gunicorn/gunicorn-config.py
+            subPath: gunicorn-config.py
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.container.port }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.container.port }}
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 60"]
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+      volumes:
+      - name: gunicorn-config
+        configMap:
+          name: "{{ .Values.name }}-gunicorn-config"
+      - name: nginx-config
+        configMap:
+          name: "{{ .Values.name }}-nginx-config"
