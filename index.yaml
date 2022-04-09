@@ -14,6 +14,16 @@ entries:
   service-base:
   - apiVersion: v2
     appVersion: 0.0.1
+    created: "2022-04-09T19:20:14.528000173Z"
+    description: A base Helm chart for services
+    digest: 2bd18665a89d8d6a825b0aea0b51f745f465db06578801b1643031fc8fc7c492
+    name: service-base
+    type: application
+    urls:
+    - https://github.com/jacknely/nelso-helm-charts/releases/download/service-base-0.0.2/service-base-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
+    appVersion: 0.0.1
     created: "2022-04-08T19:38:11.617134896Z"
     description: A base Helm chart for services
     digest: de5f6e8aadbe96b4525343e032533cbc566b6c5a892273b339e1b2b73c79842f
