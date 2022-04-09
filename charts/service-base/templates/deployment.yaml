@@ -5,7 +5,6 @@ metadata:
   name: {{ .Values.name }}
   labels:
     app: {{ .Values.name }}
-
 spec:
   selector:
     matchLabels:
@@ -14,8 +13,15 @@ spec:
     metadata:
       labels:
         app: {{ .Values.name }}
-    
-    spec:  
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: "kubernetes.io/arch"
+                  operator: In
+                  values: ["amd64"]    
       containers:
         {{- if .Values.nginx }}
         - name: "{{ .Values.name }}-nginx"
