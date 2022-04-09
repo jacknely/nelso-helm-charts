@@ -17,6 +17,20 @@ spec:
     
     spec:  
       containers:
+        {{- if .Values.nginx }}
+        - name: "{{ .Values.name }}-nginx"
+          image: nginx:alpine
+          ports:
+          - containerPort: 80
+          volumeMounts:
+          - name: nginx-config
+            mountPath: /etc/nginx/nginx.conf
+            subPath: nginx.conf
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "10m"
+        {{- end }}
         - name: {{ .Values.name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           command: ["gunicorn", "-c", "/app/config/gunicorn/gunicorn-config.py", "service:app"]
@@ -56,8 +70,10 @@ spec:
             requests:
               memory: "256Mi"
               cpu: "100m"
-  
       volumes:
       - name: gunicorn-config
         configMap:
           name: "{{ .Values.name }}-gunicorn-config"
+      - name: nginx-config
+        configMap:
+          name: "{{ .Values.name }}-nginx-config"
