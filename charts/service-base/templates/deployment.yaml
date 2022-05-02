@@ -34,8 +34,8 @@ spec:
             subPath: nginx.conf
           resources:
             requests:
-              memory: "64Mi"
-              cpu: "10m"
+              memory: "256Mi"
+              cpu: "20m"
         {{- end }}
         - name: {{ .Values.name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -74,8 +74,8 @@ spec:
                 command: ["/bin/sh", "-c", "sleep 60"]
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "100m"
+              memory: "512Mi"
+              cpu: "200m"
       volumes:
       - name: gunicorn-config
         configMap:
