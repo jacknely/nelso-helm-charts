@@ -3,6 +3,16 @@ entries:
   app-base:
   - apiVersion: v2
     appVersion: 0.0.1
+    created: "2022-05-02T20:34:39.476732939Z"
+    description: A base Helm chart for apps
+    digest: 8e9b5831e8f5bd24822a97a44f04b50fa597c8a57ac52dfd6705642a0d8ac215
+    name: app-base
+    type: application
+    urls:
+    - https://github.com/jacknely/nelso-helm-charts/releases/download/app-base-0.0.4/app-base-0.0.4.tgz
+    version: 0.0.4
+  - apiVersion: v2
+    appVersion: 0.0.1
     created: "2022-04-24T20:37:05.281217321Z"
     description: A base Helm chart for apps
     digest: 141be61c09870fd31131c323696412cb08da12b848ca564b86189a9e950fc8db
@@ -43,6 +53,16 @@ entries:
     - https://github.com/jacknely/nelso-helm-charts/releases/download/hello-world-0.1.0/hello-world-0.1.0.tgz
     version: 0.1.0
   service-base:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2022-05-02T20:34:39.621837748Z"
+    description: A base Helm chart for services
+    digest: 8cdc05c7f57d7ca7a697d9be3b784ada7a2ad254bac62254726bdeaebaa5bd7c
+    name: service-base
+    type: application
+    urls:
+    - https://github.com/jacknely/nelso-helm-charts/releases/download/service-base-0.0.4/service-base-0.0.4.tgz
+    version: 0.0.4
   - apiVersion: v2
     appVersion: 0.0.1
     created: "2022-04-09T20:05:12.976500513Z"
