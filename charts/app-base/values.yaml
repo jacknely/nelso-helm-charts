@@ -7,6 +7,10 @@ name: ""
 domain: ""
 host: ""
 
+ingressAnnotations:
+  cert-manager.io/cluster-issuer: letsencrypt-prod
+  acme.cert-manager.io/http01-edit-in-place: "true"
+
 env:
   APPLICATION_STAGE: prod
 
