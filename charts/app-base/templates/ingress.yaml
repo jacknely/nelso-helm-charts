@@ -4,7 +4,7 @@ kind: Ingress
 metadata:
   name: {{ .Values.name }}
   annotations:
-    {{ toYaml .Values.ingressAnnotations | indent 4 }}
+    {{ .Values.ingressAnnotations | indent 4 }}
 spec:
   tls:
   - hosts:
