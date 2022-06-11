@@ -3,6 +3,16 @@ entries:
   app-base:
   - apiVersion: v2
     appVersion: 0.0.1
+    created: "2022-06-11T11:06:56.106521474Z"
+    description: A base Helm chart for apps
+    digest: c4bd7bd3de178c4e0e47e15ee1642a9201b951c5f3b0c2dcc0d34356c83b5083
+    name: app-base
+    type: application
+    urls:
+    - https://github.com/jacknely/nelso-helm-charts/releases/download/app-base-0.0.9/app-base-0.0.9.tgz
+    version: 0.0.9
+  - apiVersion: v2
+    appVersion: 0.0.1
     created: "2022-06-11T10:30:01.766917801Z"
     description: A base Helm chart for apps
     digest: 82c14d179ac7d4303c63b99d6661c54be3cc117edf6323243467dcb92e0436f6
