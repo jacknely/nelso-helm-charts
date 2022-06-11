@@ -4,7 +4,9 @@ kind: Ingress
 metadata:
   name: {{ .Values.name }}
   annotations:
-    {{ .Values.ingressAnnotations | indent 4 }}
+  {{- range $key, $value := .Values.ingressAannotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
 spec:
   tls:
   - hosts:
