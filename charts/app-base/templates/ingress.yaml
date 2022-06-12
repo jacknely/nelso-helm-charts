@@ -10,10 +10,14 @@ metadata:
 spec:
   tls:
   - hosts:
-    - "{{ .Values.domain }}"
-    secretName: "{{ .Values.name }}-tls"
+    - "{{ .Values.subdomain }}"
+    secretName: "{{ .Values.subdomain }}-tls"
   rules:
-  - host: "{{ .Values.domain }}"
+  - host: {{ if .Values.subdomain }}
+    "{{ .Values.subdomain }}.{{ .Values.domain }}"
+      {{ else }}
+        {{ .Values.domain }}
+      {{ end }}
     http:
       paths:
         - path: /
