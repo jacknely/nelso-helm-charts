@@ -50,7 +50,7 @@ data:
     
         server {
             listen  80;
-            server_name {{ .Values.host }}.{{ .Values.domain }};
+            server_name {{ .Values.host }};
             root /app;
             if ($http_x_forwarded_proto = "http") {
                 return 301 https://$server_name$request_uri;

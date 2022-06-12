@@ -5,7 +5,7 @@ image:
 
 name: ""
 domain: ""
-subdomain:
+host: ""
 
 ingressAnnotations:
   cert-manager.io/cluster-issuer: letsencrypt-prod
