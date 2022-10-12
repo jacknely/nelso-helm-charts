@@ -121,6 +121,15 @@ entries:
     urls:
     - https://github.com/jacknely/nelso-helm-charts/releases/download/app-base-0.0.1/app-base-0.0.1.tgz
     version: 0.0.1
+  base-service:
+  - apiVersion: v2
+    created: "2022-10-12T20:43:57.90053227Z"
+    description: A standard Helm chart for web apps
+    digest: 2df19c750effbaa546ea18e49cffb5cbe5b38e7fd5f364fec6675f3d9d35ec43
+    name: base-service
+    urls:
+    - https://github.com/jacknely/nelso-helm-charts/releases/download/base-service-3.0.0/base-service-3.0.0.tgz
+    version: 3.0.0
   hello-world:
   - apiVersion: v2
     appVersion: 1.16.0
