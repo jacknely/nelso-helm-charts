@@ -1,36 +1,157 @@
+# If your Helm release name differs from the actual name of your app please set this.
+# It is used for the Datadog logs service name and Parameter Store path.
+appName: ""
+
+# Used to set various labels as well as the APPLICATION_STAGE environment variable
+owner: my-squad
+environment: my-uat-name
+stage: uat
+
+# The number of Pods if autoscaling is not enabled
+replicaCount: 1
+
 image:
-  repository: ""
-  tag: latest
-  pullPolicy: Always
+  repository: nginx
+  tag: stable
 
-name: ""
-domain: ""
-host: ""
+ingress:
+  enabled: false
+  className: ingress-nginx-internal
+  annotations: {}
+  host: my-app.u.tails-nonprod.com
+  paths:
+    - path: /1.0/
+      pathType: Prefix
+    - path: /static/
+      pathType: Prefix
+  # Whether to use the Wildcard certificate associated with the Ingress controller.
+  # This is valid for most common domains so will usually be true.
+  wildcardCert: true
 
-env:
-  APPLICATION_STAGE: prod
+# Please set resources. Although CPU limits can affect performance so is optional for synchronous services. 🙏
+resources: {}
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
 
-container:
-  port: 8000
-
-ports:
-  http:
-    port: 8000
-    targetPort: 8000
-    nodePort: ""
-
-service:
-  type: NodePort
-
+# Whether to enable autoscaling. Overrides the replicaCount value above.
 autoscaling:
-  enabled: true
-  minReplicas: 1
-  maxReplicas: 2
-  targetCPUUtilizationPercentage: 70
-  targetMemoryUtilizationPercentage: 80
+  enabled: false
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # Use custom metrics (causes targetCPUUtilizationPercentage to be ignored)
+  # metrics:
+  #   - type: External
+  #     external:
+  #       metric:
+  #         name: personalisation-service-tasks-queue
+  #       target:
+  #         type: AverageValue
+  #         averageValue: 5
 
+  # Use custom autoscaling behavior configuration
+  # behavior:
+  #   scaleDown:
+  #     stabilizationWindowSeconds: 300
+  #     policies:
+  #     - type: Percent
+  #       value: 100
+  #       periodSeconds: 15
+  #   scaleUp:
+  #     stabilizationWindowSeconds: 0
+  #     policies:
+  #     - type: Percent
+  #       value: 100
+  #       periodSeconds: 15
+  #     - type: Pods
+  #       value: 4
+  #       periodSeconds: 15
+  #     selectPolicy: Max
+
+# Pod scheduling things. Usually not set.
 nodeSelector: {}
 
 tolerations: []
 
 affinity: {}
+
+# Enable configuring SENTRY_ENVIRONMENT and SENTRY_DSN env vars from AWS Parameter Store /<appName>/SENTRY_DSN
+sentry:
+  enabled: false
+
+# Pull other secrets from AWS Parameter Store into env vars. Must be named /<stage>/<appName>/<secretName>
+extraSecrets: []
+#  - DATABASE_URI
+
+# Add extra environment variables straight from the values file. Please don't put passwords or keys here. 🙏
+extraEnv: []
+# - name: DD_AGENT_HOST
+#   value: datadog-apm.datadog.svc.cluster.local
+# - name: DATABASE_URL
+#   valueFrom:
+#     secretKeyRef:
+#       name: db-{{ .Values.app_name }}
+#       key: connection
+
+# Pull environment variables from existing Kubernetes secrets
+extraEnvFrom: []
+# - secretRef:
+#     name: event-system
+
+# The port the container listens on
+port: 8080
+
+livenessProbe: |
+  httpGet:
+    path: /ping
+    port: http
+  timeoutSeconds: 10
+readinessProbe: |
+  httpGet:
+    path: /ping
+    port: http
+  timeoutSeconds: 10
+service:
+  enabled: true
+
+# Set a service account for your pod to use
+# serviceAccountName: my-app
+
+# Override the default command in the Dockerfile
+# command: ["/bin/bash", "-c", "sleep infinity"]
+
+# Enable a database migration Job.
+# Shares most configuration with the main application Pods e.g. environment variables, container image
+migration:
+  enabled: false
+  command: ["alembic", "upgrade", "head"]
+  resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+# Enable custom CronJobs.
+# cronjobs:
+#   - name: my-job
+#     schedule: "*/5 * * * *"
+#     backoffLimit: 0
+#     command: ["python", "myscript.py"]
+#     resources:
+#       limits:
+#         cpu: 100m
+#         memory: 128Mi
+#       requests:
+#         cpu: 100m
+#         memory: 128Mi
+
+# Create a Prometheus Operator PodMonitor to get Prometheus to scrape metrics
+prometheus:
+  enabled: false
+  path: /metrics

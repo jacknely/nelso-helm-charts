@@ -1,85 +1,111 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.name }}
   labels:
-    app: {{ .Values.name }}
+    {{- include "base-service.labels" . | nindent 4 }}
+  name: {{ include "base-service.name" . }}
 spec:
+  progressDeadlineSeconds: 300
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
-      app: {{ .Values.name }}
+      {{- include "base-service.selectorLabels" . | nindent 6 }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 0
+    type: RollingUpdate
   template:
     metadata:
+      annotations:
+        ad.datadoghq.com/main.logs: '[{"service":"{{ include "base-service.datadog-service" . }}","source":"{{ include "base-service.name" . }}"}]'
       labels:
-        app: {{ .Values.name }}
+        {{- include "base-service.selectorLabels" . | nindent 8 }}
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                - key: "kubernetes.io/arch"
-                  operator: In
-                  values: ["amd64"]    
       containers:
-        {{- if .Values.nginx }}
-        - name: "{{ .Values.name }}-nginx"
-          image: nginx:alpine
-          ports:
-          - containerPort: 80
-          volumeMounts:
-          - name: nginx-config
-            mountPath: /etc/nginx/nginx.conf
-            subPath: nginx.conf
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "20m"
-        {{- end }}
-        - name: {{ .Values.name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          command: ["gunicorn", "-c", "/app/config/gunicorn/gunicorn-config.py", "service:app"]
-          ports:
-          - containerPort: {{ .Values.container.port }}       
-          {{- if or $.Values.env $.Values.envSecrets }}
+        - name: main
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          {{- with .Values.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           env:
-            {{- range $key, $value := $.Values.env }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
+            - name: AWS_DEFAULT_REGION
+              value: eu-west-1
+            - name: COMMIT_ID
+              value: {{ .Values.image.tag }}
+            {{- if .Values.ingress.enabled }}
+            - name: DOMAIN
+              value: {{ .Values.ingress.host }}
             {{- end }}
-            {{- range $key, $secret := $.Values.envSecrets }}
-            - name: {{ $key }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ $secret }}
-                  key: {{ $key | quote }}
+            - name: APPLICATION_STAGE
+              value: {{ .Values.stage }}
+            - name: APPLICATION_ENVIRONMENT
+              value: {{ .Values.environment }}
+            {{- with .Values.extraEnv }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
-          {{- end }}         
-          volumeMounts:
-          - name: gunicorn-config
-            mountPath: /app/config/gunicorn/gunicorn-config.py
-            subPath: gunicorn-config.py
+          {{- if .Values.extraSecrets }}
+          envFrom:
+            - secretRef:
+                name: {{ include "base-service.name" . }}
+          {{- end }}
+          {{- with .Values.extraEnvFrom }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+          {{- if .Values.service.enabled }}
+          ports:
+            - containerPort: {{ .Values.port }}
+              protocol: TCP
+              name: http
+          {{- end }}
+          {{- with .Values.livenessProbe }}
           livenessProbe:
-            httpGet:
-              path: /health
-              port: {{ .Values.container.port }}
+            {{- tpl . $ | nindent 12 -}}
+          {{- end -}}
+          {{- with .Values.readinessProbe }}
           readinessProbe:
-            httpGet:
-              path: /health
-              port: {{ .Values.container.port }}
-          lifecycle:
-            preStop:
-              exec:
-                command: ["/bin/sh", "-c", "sleep 60"]
+            {{- tpl . $ | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
           resources:
-            requests:
-              memory: "512Mi"
-              cpu: "200m"
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 1000
+            runAsUser: 1000
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
+      {{- with .Values.serviceAccountName }}
+      serviceAccountName: {{ . }}
+      {{- end }}
+      enableServiceLinks: false
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
       volumes:
-      - name: gunicorn-config
-        configMap:
-          name: "{{ .Values.name }}-gunicorn-config"
-      - name: nginx-config
-        configMap:
-          name: "{{ .Values.name }}-nginx-config"
+        - emptyDir: {}
+          name: tmp
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
