@@ -1,0 +1,16 @@
+{{- if .Values.service.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    {{- include "base-service.labels" . | nindent 4 }}
+  name: {{ include "base-service.name" . }}
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: http
+      name: http
+  selector:
+    {{- include "base-service.selectorLabels" . | nindent 4 }}
+{{- end }}
