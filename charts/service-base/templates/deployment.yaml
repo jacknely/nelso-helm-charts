@@ -20,7 +20,7 @@ spec:
   template:
     metadata:
       annotations:
-        ad.datadoghq.com/main.logs: '[{"service":"{{ include "base-service.datadog-service" . }}","source":"{{ include "base-service.name" . }}"}]'
+        {{- include "base-service.annotations" . | nindent 8 }}
       labels:
         {{- include "base-service.selectorLabels" . | nindent 8 }}
     spec:
