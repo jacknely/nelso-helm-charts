@@ -12,6 +12,7 @@ metadata:
     {{- include "base-service.labels" . | nindent 4 }}
   name: {{ include "base-service.name" . }}
 spec:
+  type: LoadBalancer
   ports:
     - port: 80
       protocol: TCP
