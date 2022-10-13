@@ -19,8 +19,6 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      annotations:
-        {{- include "base-service.annotations" . | nindent 8 }}
       labels:
         {{- include "base-service.selectorLabels" . | nindent 8 }}
     spec:
