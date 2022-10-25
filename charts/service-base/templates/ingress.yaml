@@ -1,0 +1,41 @@
+{{- if .Values.ingress.enabled -}}
+{{- $name := include "base-service.name" . -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "base-service.labels" . | nindent 4 }}
+  {{- if or (.Values.ingress.annotations) (not .Values.ingress.wildcardCert) }}
+  annotations:
+  {{- end }}
+  {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if not .Values.ingress.wildcardCert }}
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host | quote }}
+      {{- if not .Values.ingress.wildcardCert }}
+      secretName: "{{ $name }}-tls"
+      {{- end }}
+  rules:
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+          {{- range .Values.ingress.paths }}
+          - path: {{ .path }}
+            {{- with .pathType }}
+            pathType: {{ . }}
+            {{- end }}
+            backend:
+              service:
+                name: {{ $name }}
+                port:
+                  number: 80
+          {{- end }}
+{{- end }}
