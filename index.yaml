@@ -123,6 +123,14 @@ entries:
     version: 0.0.1
   base-service:
   - apiVersion: v2
+    created: "2023-03-12T18:01:03.903397866Z"
+    description: A standard Helm chart for web apps
+    digest: d5301f49d4e91a1d2e33d54025f7c00e02223152fb61204cb4520fd06b014979
+    name: base-service
+    urls:
+    - https://github.com/jacknely/nelso-helm-charts/releases/download/base-service-3.0.14/base-service-3.0.14.tgz
+    version: 3.0.14
+  - apiVersion: v2
     created: "2023-03-12T17:57:37.794656016Z"
     description: A standard Helm chart for web apps
     digest: ff6774f42d84005a883119d912c4b9027f73de81993fe4efb6d047b07afe62e0
