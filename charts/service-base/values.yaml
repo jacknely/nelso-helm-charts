@@ -120,6 +120,8 @@ service:
 
 # Set a service account for your pod to use
 # serviceAccountName: my-app
+serviceAccount:
+  enabled: false
 
 # Override the default command in the Dockerfile
 # command: ["/bin/bash", "-c", "sleep infinity"]
