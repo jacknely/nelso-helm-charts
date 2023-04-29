@@ -16,17 +16,17 @@ image:
 
 ingress:
   enabled: false
-  className: ingress-nginx-internal
+  className: nginx
   annotations: {}
-  host: my-app.u.tails-nonprod.com
+  host: service-base.kotini.co
   paths:
-    - path: /1.0/
+    - path: /
       pathType: Prefix
     - path: /static/
       pathType: Prefix
   # Whether to use the Wildcard certificate associated with the Ingress controller.
   # This is valid for most common domains so will usually be true.
-  wildcardCert: true
+  wildcardCert: false
 
 # Please set resources. Although CPU limits can affect performance so is optional for synchronous services. 🙏
 resources: {}
