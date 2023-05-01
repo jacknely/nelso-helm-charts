@@ -83,8 +83,12 @@ spec:
         options:
           - name: ndots
             value: "1"
-      {{- with .Values.serviceAccountName }}
-      serviceAccountName: {{ . }}
+      {{- if .Values.serviceAccount.enabled }}
+      {{- if .Values.serviceAccount.existingName }}
+      serviceAccountName: {{ .Values.serviceAccount.existingName }}
+      {{- else }}
+      serviceAccountName: {{ include "service-base.name" . }}
+      {{- end }}
       {{- end }}
       enableServiceLinks: false
       securityContext:
