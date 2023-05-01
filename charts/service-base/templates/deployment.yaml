@@ -87,7 +87,7 @@ spec:
       {{- if .Values.serviceAccount.existingName }}
       serviceAccountName: {{ .Values.serviceAccount.existingName }}
       {{- else }}
-      serviceAccountName: {{ include "service-base.name" . }}
+      serviceAccountName: {{ include "base-service.name" . | quote }}
       {{- end }}
       {{- end }}
       enableServiceLinks: false
