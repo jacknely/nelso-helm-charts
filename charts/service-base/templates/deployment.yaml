@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
+    tags.datadoghq.com/env: {{ .Values.environment }}
+    tags.datadoghq.com/service: {{ include "base-service.name" . }}
+    tags.datadoghq.com/version: "v1.13.4"
     {{- include "base-service.labels" . | nindent 4 }}
   name: {{ include "base-service.name" . }}
 spec:
@@ -20,8 +23,12 @@ spec:
   template:
     metadata:
      annotations:
-        ad.datadoghq.com/main.logs: '[{"service":"{{ include "base-service.datadog-service" . }}","source":"{{ include "base-service.name" . }}"}]'
+        admission.datadoghq.com/python-lib.version: v1.13.4
       labels:
+        tags.datadoghq.com/env: {{ .Values.environment }}
+        tags.datadoghq.com/service: {{ include "base-service.name" . }}
+        tags.datadoghq.com/version: "v1.13.4"
+        admission.datadoghq.com/python-lib.version: v1.13.4
         {{- include "base-service.selectorLabels" . | nindent 8 }}
     spec:
       containers:
@@ -32,6 +39,8 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           env:
+            - name: DD_LOGS_INJECTION
+              value: "true"
             - name: AWS_DEFAULT_REGION
               value: eu-west-1
             - name: COMMIT_ID
