@@ -157,3 +157,7 @@ migration:
 prometheus:
   enabled: false
   path: /metrics
+
+# Enable datadog apm
+datadog:
+  enabled: false
