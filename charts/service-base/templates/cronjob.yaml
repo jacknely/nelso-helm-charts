@@ -1,0 +1,108 @@
+{{- $values := .Values -}}
+{{- $name := include "service-base.name" . -}}
+{{- $labels := include "service-base.labels" . -}}
+{{- $selectorLabels := include "service-base.selectorLabels" . -}}
+{{- $datadogService := include "service-base.datadog-service" . -}}
+{{- range .Values.cronjobs -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  labels:
+    {{- $labels | nindent 4 }}
+    service-base-component: {{ .name | quote }}
+  name: {{ $name }}-{{ .name }}
+spec:
+  schedule: {{ .schedule | quote }}
+  jobTemplate:
+    spec:
+      backoffLimit: {{ .backoffLimit }}
+      template:
+        metadata:
+          annotations:
+            ad.datadoghq.com/{{ .name }}.logs: '[{"service":"{{ $datadogService }}","source":"{{ .name }}"}]'
+            linkerd.io/inject: "disabled"
+          labels:
+            {{- $selectorLabels | nindent 12 }}
+            service-base-component: {{ .name | quote }}
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: {{ .name }}
+              image: {{ $values.image.repository }}:{{ $values.image.tag }}
+              {{- with .command }}
+              command:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              env:
+                - name: AWS_DEFAULT_REGION
+                  value: "eu-west-1"
+                {{- if $values.ingress.enabled }}
+                - name: DOMAIN
+                  value: {{ $values.ingress.host | quote }}
+                {{- end }}
+                - name: COMMIT_ID
+                  value: {{ $values.image.tag | quote }}
+                - name: APPLICATION_STAGE
+                  value: {{ $values.stage | quote }}
+                - name: APPLICATION_ENVIRONMENT
+                  value: {{ $values.environment | quote }}
+                {{- if $values.sentry.enabled }}
+                - name: SENTRY_ENVIRONMENT
+                  value: {{ $values.stage | quote }}
+                {{- end }}
+                {{- with $values.extraEnv }}
+                {{- toYaml . | nindent 16 }}
+                {{- end }}
+              {{- if or $values.sentry.enabled $values.extraSecrets }}
+              envFrom:
+                - secretRef:
+                    name: {{ $name }}
+              {{- end }}
+              {{- with $values.extraEnvFrom }}
+              {{- toYaml . | nindent 14 }}
+              {{- end }}
+              {{- with .resources }}
+              resources:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                runAsGroup: 1000
+                runAsUser: 1000
+              volumeMounts:
+                - mountPath: /tmp
+                  name: tmp
+          dnsConfig:
+            options:
+              - name: ndots
+                value: "1"
+          {{- if .Values.serviceAccount.enabled }}
+          {{- if .Values.serviceAccount.existingName }}
+          serviceAccountName: {{ .Values.serviceAccount.existingName }}
+          {{- else }}
+          serviceAccountName: {{ include "service-base.name" . }}
+          {{- end }}
+          {{- end }}
+          enableServiceLinks: false
+          securityContext:
+            fsGroup: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+          volumes:
+            - emptyDir: {}
+              name: tmp
+          {{- with $values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+    {{- end }}

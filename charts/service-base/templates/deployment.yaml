@@ -19,6 +19,8 @@ spec:
     type: RollingUpdate
   template:
     metadata:
+     annotations:
+        ad.datadoghq.com/main.logs: '[{"service":"{{ include "base-service.datadog-service" . }}","source":"{{ include "base-service.name" . }}"}]'
       labels:
         {{- include "base-service.selectorLabels" . | nindent 8 }}
     spec:
