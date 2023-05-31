@@ -32,7 +32,7 @@ spec:
         tags.datadoghq.com/version: v7
         admission.datadoghq.com/enabled: "true"
         {{- end }}
-      {{- if and .Values.datadog.enabled (eq .Values.datadog.admission "python") -}}
+      {{- if and .Values.datadog.enabled (eq .Values.datadog.admission "python") }}
       annotations:
         admission.datadoghq.com/python-lib.version: v1.13.3
       {{- end }}
