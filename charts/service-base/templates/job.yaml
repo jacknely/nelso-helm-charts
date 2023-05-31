@@ -1,5 +1,4 @@
 {{- $values := .Values -}}
-{{- $name := include "service-base.name" . -}}
 {{- $labels := include "service-base.labels" . -}}
 {{- $selectorLabels := include "service-base.selectorLabels" . -}}
 {{- $datadogService := include "service-base.datadog-service" . -}}
@@ -79,11 +78,7 @@ spec:
           - name: ndots
             value: "1"
       {{- if .Values.serviceAccount.enabled }}
-      {{- if .Values.serviceAccount.existingName }}
       serviceAccountName: {{ .Values.serviceAccount.existingName }}
-      {{- else }}
-      serviceAccountName: {{ include "service-base.name" . }}
-      {{- end }}
       {{- end }}
       enableServiceLinks: false
       securityContext:
