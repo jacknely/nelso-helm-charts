@@ -2,9 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    tags.datadoghq.com/env: {{ .Values.environment }}
-    tags.datadoghq.com/service: {{ include "base-service.name" . }}
-    tags.datadoghq.com/version: "v1.13.4"
     {{- include "base-service.labels" . | nindent 4 }}
   name: {{ include "base-service.name" . }}
 spec:
@@ -22,13 +19,7 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-     annotations:
-        admission.datadoghq.com/python-lib.version: v1.13.4
       labels:
-        tags.datadoghq.com/env: {{ .Values.environment }}
-        tags.datadoghq.com/service: {{ include "base-service.name" . }}
-        tags.datadoghq.com/version: "v1.13.4"
-        admission.datadoghq.com/python-lib.version: v1.13.4
         {{- include "base-service.selectorLabels" . | nindent 8 }}
     spec:
       containers:
