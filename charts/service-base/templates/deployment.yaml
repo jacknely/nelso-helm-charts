@@ -34,7 +34,7 @@ spec:
         {{- end }}
       {{- if and .Values.datadog.enabled (eq .Values.datadog.admission "python") }}
       annotations:
-        admission.datadoghq.com/python-lib.version: v1.13.3
+        admission.datadoghq.com/python-lib.version: v1.20.3
       {{- end }}
     spec:
       containers:
