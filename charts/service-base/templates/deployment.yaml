@@ -124,8 +124,10 @@ spec:
           name: tmp
       {{- with .Values.nodeSelector }}
       nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+        {{- if .Values.datadog.enabled }}
+        role: "monitored-general"
+        {{- end }}
       {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
