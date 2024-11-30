@@ -126,11 +126,11 @@ spec:
       nodeSelector:
         {{- toYaml .Values.nodeSelector | nindent 8 }}
         {{- if .Values.datadog.enabled }}
-        role: "monitored-general"
+        role: "monitored-private-nodes"
         {{- end }}
       {{- else if .Values.datadog.enabled }}
       nodeSelector:
-        role: "monitored-general"
+        role: "monitored-private-nodes"
       {{- end }}
       {{- with .Values.affinity }}
       affinity:
