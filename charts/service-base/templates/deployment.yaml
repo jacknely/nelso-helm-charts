@@ -84,8 +84,8 @@ spec:
           {{- end }}
           {{- with .Values.livenessProbe }}
           livenessProbe:
-            {{- tpl . $ | nindent 12 -}}
-          {{- end -}}
+            {{- tpl . $ | nindent 12 }}
+          {{- end }}
           {{- with .Values.readinessProbe }}
           readinessProbe:
             {{- tpl . $ | nindent 12 }}
@@ -124,10 +124,11 @@ spec:
           name: tmp
       {{- with .Values.nodeSelector }}
       nodeSelector:
-        {{- toYaml .Values.nodeSelector | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
         {{- if .Values.datadog.enabled }}
         role: "monitored-general"
         {{- end }}
+      {{- end }}
       {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
