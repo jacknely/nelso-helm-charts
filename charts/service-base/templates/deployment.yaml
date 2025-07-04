@@ -3,11 +3,6 @@ kind: Deployment
 metadata:
   labels:
     {{- include "base-service.labels" . | nindent 4 }}
-    {{- if .Values.datadog.enabled }}
-    tags.datadoghq.com/env: {{ .Values.stage }}
-    tags.datadoghq.com/service: {{ include "base-service.name" . }}
-    tags.datadoghq.com/version: v7
-    {{- end }}
   name: {{ include "base-service.name" . }}
 spec:
   progressDeadlineSeconds: 300
@@ -26,16 +21,6 @@ spec:
     metadata:
       labels:
         {{- include "base-service.selectorLabels" . | nindent 8 }}
-        {{- if .Values.datadog.enabled }}
-        tags.datadoghq.com/env: {{ .Values.stage }}
-        tags.datadoghq.com/service: {{ include "base-service.name" . }}
-        tags.datadoghq.com/version: v7
-        admission.datadoghq.com/enabled: "true"
-        {{- end }}
-      {{- if and .Values.datadog.enabled (eq .Values.datadog.admission "python") }}
-      annotations:
-        admission.datadoghq.com/python-lib.version: v2.12.2
-      {{- end }}
     spec:
       containers:
         - name: main
@@ -45,14 +30,6 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           env:
-            {{- if .Values.datadog.enabled }}
-            - name: DD_LOGS_INJECTION
-              value: "true"
-            - name: DD_TRACE_SAMPLE_RAT
-              value: "1"
-            - name: USE_DATADOG
-              value: "true"
-            {{- end }}
             - name: AWS_DEFAULT_REGION
               value: eu-west-1
             - name: COMMIT_ID
@@ -125,12 +102,6 @@ spec:
       {{- if .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml .Values.nodeSelector | nindent 8 }}
-        {{- if .Values.datadog.enabled }}
-        role: "general-monitored"
-        {{- end }}
-      {{- else if .Values.datadog.enabled }}
-      nodeSelector:
-        role: "general-monitored"
       {{- end }}
       {{- with .Values.affinity }}
       affinity:
