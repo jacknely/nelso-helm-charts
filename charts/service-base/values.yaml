@@ -41,9 +41,9 @@ resources: {}
 autoscaling:
   enabled: true
   minReplicas: 1
-  maxReplicas: 5
-  targetCPUUtilizationPercentage: 90
-  targetMemoryUtilizationPercentage: 90
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 100
+  targetMemoryUtilizationPercentage: 100
   # Use custom metrics (causes targetCPUUtilizationPercentage to be ignored)
   # metrics:
   #   - type: External
