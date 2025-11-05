@@ -80,6 +80,27 @@ tolerations: []
 
 affinity: {}
 
+# Topology spread constraints abstraction.
+# Set `enabled: true` to apply a default zone spread using this chart's selector labels.
+# Provide `custom` list to fully override with bespoke constraints.
+# If `custom` is empty and enabled, the chart renders a single default constraint.
+topologySpreadConstraints:
+  enabled: true
+  custom: []
+  # If enabled and custom is empty, a default constraint spreads across zones using selector labels.
+  # Provide a custom list to override entirely. Example:
+  # custom:
+  #   - topologyKey: topology.kubernetes.io/zone
+  #     maxSkew: 1
+  #     whenUnsatisfiable: ScheduleAnyway
+  #     labelSelector:
+  #       matchLabels:
+  #         app.kubernetes.io/name: my-app
+  #         component: webhook
+  #     # Optional matchLabelKeys – rarely needed.
+  #     # matchLabelKeys:
+  #     #   - app.kubernetes.io/instance
+
 # Enable configuring SENTRY_ENVIRONMENT and SENTRY_DSN env vars from AWS Parameter Store /<appName>/SENTRY_DSN
 sentry:
   enabled: false
@@ -162,3 +183,10 @@ prometheus:
 # Enable datadog apm
 datadog:
   enabled: false
+
+# Protect against voluntary disruptions (evictions) by ensuring a minimum number of pods stay available.
+# Only set ONE of minAvailable or maxUnavailable.
+pdb:
+  enabled: true
+  minAvailable: 1
+  # maxUnavailable: 1

@@ -1,0 +1,23 @@
+{{- if .Values.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "base-service.name" . }}
+  labels:
+    {{- include "base-service.labels" . | nindent 4 }}
+spec:
+  {{- if and (.Values.pdb.minAvailable) (.Values.pdb.maxUnavailable) }}
+  # Both minAvailable and maxUnavailable are set; minAvailable takes precedence.
+  minAvailable: {{ .Values.pdb.minAvailable }}
+  {{- else if .Values.pdb.minAvailable }}
+  minAvailable: {{ .Values.pdb.minAvailable }}
+  {{- else if .Values.pdb.maxUnavailable }}
+  maxUnavailable: {{ .Values.pdb.maxUnavailable }}
+  {{- else }}
+  # Default safeguard if neither specified
+  minAvailable: 1
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "base-service.selectorLabels" . | nindent 6 }}
+{{- end }}

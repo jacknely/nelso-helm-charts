@@ -111,3 +111,16 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if .Values.topologySpreadConstraints.enabled }}
+      topologySpreadConstraints:
+        {{- if .Values.topologySpreadConstraints.custom }}
+        {{- toYaml .Values.topologySpreadConstraints.custom | nindent 8 }}
+        {{- else }}
+        - topologyKey: topology.kubernetes.io/zone
+          maxSkew: 1
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              {{- include "base-service.selectorLabels" . | nindent 14 }}
+        {{- end }}
+      {{- end }}
