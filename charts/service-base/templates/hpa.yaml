@@ -31,10 +31,10 @@ spec:
           averageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
   {{- end }}
-  {{- /* If a full behavior block is provided, use it; else fall back to scaleUpStabilizationWindowSeconds if set > 0 */ -}}
-  {{- with .Values.autoscaling.behavior }}
+  {{- /* If a full behavior block is provided, use it; else fall back to scaleUpStabilizationWindowSeconds if set > 0 */}}
+  {{- if .Values.autoscaling.behavior }}
   behavior:
-    {{- toYaml . | nindent 4 }}
+    {{- toYaml .Values.autoscaling.behavior | nindent 4 }}
   {{- else if and (.Values.autoscaling.scaleUpStabilizationWindowSeconds) (gt .Values.autoscaling.scaleUpStabilizationWindowSeconds 0) }}
   behavior:
     scaleUp:
@@ -43,6 +43,6 @@ spec:
         - type: Pods
           value: 1
           periodSeconds: 60
-    # You can optionally set a scaleDown policy via autoscaling.behavior if desired.
+    # Provide a custom autoscaling.behavior block in values to override this fallback (including scaleDown policies).
   {{- end }}
 {{- end }}
