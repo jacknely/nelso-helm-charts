@@ -35,7 +35,7 @@ spec:
   {{- if .Values.autoscaling.behavior }}
   behavior:
     {{- toYaml .Values.autoscaling.behavior | nindent 4 }}
-  {{- else if and (.Values.autoscaling.scaleUpStabilizationWindowSeconds) (gt .Values.autoscaling.scaleUpStabilizationWindowSeconds 0) }}
+  {{- else if and (.Values.autoscaling.scaleUpStabilizationWindowSeconds) (gt (.Values.autoscaling.scaleUpStabilizationWindowSeconds | int) 0) }}
   behavior:
     scaleUp:
       stabilizationWindowSeconds: {{ .Values.autoscaling.scaleUpStabilizationWindowSeconds }}
@@ -43,6 +43,5 @@ spec:
         - type: Pods
           value: 1
           periodSeconds: 60
-    # Provide a custom autoscaling.behavior block in values to override this fallback (including scaleDown policies).
   {{- end }}
 {{- end }}
