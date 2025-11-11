@@ -44,6 +44,10 @@ autoscaling:
   maxReplicas: 3
   targetCPUUtilizationPercentage: 100
   targetMemoryUtilizationPercentage: 100
+  # Prevent rapid scale-ups by stabilizing desired replica calculations.
+  # If set, a default HPA behavior section is rendered limiting scale-up to 1 pod per 60s.
+  # Set to 0 to disable this default (or provide a full custom autoscaling.behavior block below).
+  scaleUpStabilizationWindowSeconds: 60
   # Use custom metrics (causes targetCPUUtilizationPercentage to be ignored)
   # metrics:
   #   - type: External
