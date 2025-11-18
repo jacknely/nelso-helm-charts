@@ -1,0 +1,41 @@
+{{- range .Values.vaultSecrets }}
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: {{ .name }}
+  namespace: {{ $.Release.Namespace }}
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  method: kubernetes
+  mount: {{ .mount | default (printf "kubernetes_kotini_%s" $.Values.environment) }}
+  kubernetes:
+    role: {{ printf "%s-%s" $.Values.stage .name }}
+    serviceAccount: {{ .name }}
+    audiences:
+      - vault
+    tokenExpirationSeconds: {{ .tokenExpirationSeconds | default 600 }}
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultStaticSecret
+metadata:
+  name: {{ .name }}
+  namespace: {{ $.Release.Namespace }}
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  type: kv-v2
+  mount: {{ .mount | default "kv" }}
+  path: {{ .path }}
+  vaultAuthRef: {{ .name }}
+  serviceAccountRef:
+    name: {{ include "base-service.name" $ }}
+  destination:
+    name: {{ .destination.name }}
+    create: {{ .destination.create | default true }}
+{{- end }}

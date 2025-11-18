@@ -128,6 +128,24 @@ extraEnvFrom: []
 # - secretRef:
 #     name: event-system
 
+
+# HashiCorp Vault integration (multiple secrets)
+vaultSecrets: []
+# Example:
+# vaultSecrets:
+#   - name: shared-redis-secrets
+#     mount: kv
+#     path: staging/eu-west-1/redis/shared
+#     destination:
+#       name: shared-redis-secrets
+#       create: true
+#   - name: another-secret
+#     mount: kv
+#     path: staging/eu-west-1/redis/another
+#     destination:
+#       name: another-secret
+#       create: true
+
 # The port the container listens on
 port: 8080
 
@@ -148,6 +166,14 @@ service:
 # serviceAccountName: my-app
 serviceAccount:
   enabled: false
+
+  # Example: Custom ServiceAccount fields
+  # name: flower
+  # namespace: monitoring
+  # annotations:
+  #   argocd.argoproj.io/hook: Sync
+  #   argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+  #   argocd.argoproj.io/sync-wave: "-1"
 
 # Override the default command in the Dockerfile
 # command: ["/bin/bash", "-c", "sleep infinity"]
