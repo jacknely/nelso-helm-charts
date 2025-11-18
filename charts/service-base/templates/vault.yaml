@@ -36,6 +36,6 @@ spec:
   serviceAccountRef:
     name: {{ include "base-service.name" $ }}
   destination:
-    name: {{ .destination.name }}
+    name: {{ .destination.name | default .name }}
     create: {{ .destination.create | default true }}
 {{- end }}
