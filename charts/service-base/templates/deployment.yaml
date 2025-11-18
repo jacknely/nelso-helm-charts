@@ -90,7 +90,7 @@ spec:
       serviceAccountName: {{ include "base-service.name" . | quote }}
       {{- end }}
       {{- end }}
-      enableServiceLinks: false
+      enableServiceLinks: {{ .Values.enableServiceLinks }}
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000

@@ -38,6 +38,8 @@ resources: {}
 #   memory: 128Mi
 
 # Whether to enable autoscaling. Overrides the replicaCount value above.
+# Uncomment to control service link injection in pods (default: true)
+# enableServiceLinks: false
 autoscaling:
   enabled: true
   minReplicas: 1
