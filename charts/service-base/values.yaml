@@ -138,15 +138,9 @@ vaultSecrets: []
 #   - name: shared-redis-secrets
 #     mount: kv
 #     path: staging/eu-west-1/redis/shared
-#     destination:
-#       name: shared-redis-secrets
-#       create: true
 #   - name: another-secret
 #     mount: kv
 #     path: staging/eu-west-1/redis/another
-#     destination:
-#       name: another-secret
-#       create: true
 
 # The port the container listens on
 port: 8080
