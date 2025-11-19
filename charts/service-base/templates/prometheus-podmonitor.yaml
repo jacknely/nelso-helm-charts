@@ -1,0 +1,18 @@
+{{- if .Values.prometheus.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "base-service.name" . }}
+  labels:
+    {{- include "base-service.labels" . | nindent 4 }}
+    base-service-component: {{ include "base-service.name" . | quote }}
+    release: kube-prometheus-stack
+spec:
+  podMetricsEndpoints:
+    - path: {{ .Values.prometheus.path }}
+      port: http
+  selector:
+    matchLabels:
+      {{- include "base-service.selectorLabels" . | nindent 6 }}
+      base-service-component: {{ include "base-service.name" . | quote }}
+{{- end }}

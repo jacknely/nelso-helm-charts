@@ -1,0 +1,15 @@
+{{- if .Values.prometheus.rules -}}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "base-service.name" . }}
+  labels:
+    {{- include "base-service.labels" . | nindent 4 }}
+    base-service-component: {{ include "base-service.name" . | quote }}
+    release: kube-prometheus-stack
+spec:
+  groups:
+  - name: {{ include "base-service.name" . }}
+    rules:
+    {{- toYaml .Values.prometheus.rules | nindent 6 }}
+{{- end }}
