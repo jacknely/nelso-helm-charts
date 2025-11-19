@@ -14,7 +14,7 @@ spec:
   mount: {{ .mount | default (printf "kubernetes_kotini_%s" $.Values.environment) }}
   kubernetes:
     role: {{ printf "%s-%s" $.Values.stage .name }}
-    serviceAccount: {{ .name }}
+    serviceAccount: {{ include "base-service.name" $ }}
     audiences:
       - vault
     tokenExpirationSeconds: {{ .tokenExpirationSeconds | default 600 }}
