@@ -13,7 +13,7 @@ spec:
   method: kubernetes
   mount: {{ .mount | default (printf "kubernetes_kotini_%s" $.Values.environment) }}
   kubernetes:
-    role: {{ printf "%s-%s" $.Values.stage .name }}
+  role: {{ printf "%s-%s" $.Values.stage (include "base-service.name" $) }}
     serviceAccount: {{ include "base-service.name" $ }}
     audiences:
       - vault
