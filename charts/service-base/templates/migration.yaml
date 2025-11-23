@@ -41,6 +41,12 @@ spec:
             {{- if .Values.sentry.enabled }}
             - name: SENTRY_ENVIRONMENT
               value: {{ .Values.stage }}
+            - name: SENTRY_RELEASE
+              value: {{ .Values.image.tag }}
+            - name: NEXT_PUBLIC_SENTRY_ENVIRONMENT
+              value: {{ .Values.stage }}
+            - name: NEXT_PUBLIC_SENTRY_RELEASE
+              value: {{ .Values.image.tag }}
             {{- end }}
             {{- with .Values.extraEnv }}
             {{- toYaml . | nindent 12 }}
