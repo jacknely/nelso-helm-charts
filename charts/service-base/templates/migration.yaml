@@ -38,20 +38,10 @@ spec:
               value: {{ .Values.stage }}
             - name: APPLICATION_ENVIRONMENT
               value: {{ .Values.environment }}
-            {{- if .Values.sentry.enabled }}
-            - name: SENTRY_ENVIRONMENT
-              value: {{ .Values.stage }}
-            - name: SENTRY_RELEASE
-              value: {{ .Values.image.tag }}
-            - name: NEXT_PUBLIC_SENTRY_ENVIRONMENT
-              value: {{ .Values.stage }}
-            - name: NEXT_PUBLIC_SENTRY_RELEASE
-              value: {{ .Values.image.tag }}
-            {{- end }}
             {{- with .Values.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-          {{- if or .Values.sentry.enabled .Values.extraSecrets }}
+          {{- if .Values.extraSecrets }}
           envFrom:
             - secretRef:
                 name: {{ include "base-service.name" . }}

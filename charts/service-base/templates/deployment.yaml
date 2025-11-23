@@ -34,14 +34,6 @@ spec:
               value: eu-west-1
             - name: COMMIT_ID
               value: {{ .Values.image.tag }}
-            - name: SENTRY_ENVIRONMENT
-              value: {{ .Values.stage }}
-            - name: SENTRY_RELEASE
-              value: {{ .Values.image.tag }}
-            - name: NEXT_PUBLIC_SENTRY_ENVIRONMENT
-              value: {{ .Values.stage }}
-            - name: NEXT_PUBLIC_SENTRY_RELEASE
-              value: {{ .Values.image.tag }}
             {{- if .Values.ingress.enabled }}
             - name: DOMAIN
               value: {{ .Values.ingress.host }}
