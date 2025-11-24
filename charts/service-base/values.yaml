@@ -107,9 +107,6 @@ topologySpreadConstraints:
   #     # matchLabelKeys:
   #     #   - app.kubernetes.io/instance
 
-# Enable configuring SENTRY_ENVIRONMENT and SENTRY_DSN env vars from AWS Parameter Store /<appName>/SENTRY_DSN
-sentry:
-  enabled: false
 
 # Pull other secrets from AWS Parameter Store into env vars. Must be named /<stage>/<appName>/<secretName>
 extraSecrets: []
