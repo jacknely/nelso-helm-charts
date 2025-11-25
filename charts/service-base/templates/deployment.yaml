@@ -79,6 +79,9 @@ spec:
           volumeMounts:
             - mountPath: /tmp
               name: tmp
+          {{- with .Values.volumeMounts }}
+          {{ toYaml . | nindent 12 }}
+          {{- end }}
       dnsConfig:
         options:
           - name: ndots
@@ -99,6 +102,9 @@ spec:
       volumes:
         - emptyDir: {}
           name: tmp
+      {{- with .Values.volumes }}
+      {{ toYaml . | nindent 8 }}
+      {{- end }}
       {{- if .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml .Values.nodeSelector | nindent 8 }}
