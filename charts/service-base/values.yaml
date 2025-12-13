@@ -138,7 +138,7 @@ extraEnv: []
 #       key: connection
 
 # the path to parameter store values
-# extraEnvSource: backend-api
+# extraSecretsSource: backend-api
 
 # Pull environment variables from existing Kubernetes secrets
 extraEnvFrom: []
