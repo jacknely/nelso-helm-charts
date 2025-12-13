@@ -137,13 +137,16 @@ extraEnv: []
 #       name: db-{{ .Values.app_name }}
 #       key: connection
 
+# the path to parameter store values
+# extraEnvSource: backend-api
+
 # Pull environment variables from existing Kubernetes secrets
 extraEnvFrom: []
 # - secretRef:
 #     name: event-system
 
 
-# HashiCorp Vault integration (multiple secrets)
+# HashiCorp Vault integration
 vaultSecrets: []
 # Example:
 # vaultSecrets:
